@@ -108,12 +108,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public boolean updateChallengeBlock(Long blockId, ChallengeBlockUpdateRequest request) {
-        // Реализация обновления блока вызова
-        return true;
-    }
-
-    @Override
     public Map<String, Object> getSystemStatistics() {
         return Map.of(
                 "totalUsers", getTotalUsers(),
@@ -158,14 +152,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<User> getAllUsers(int page, int size) {
-        // В реальной реализации здесь была бы пагинация
-        // Для простоты возвращаем всех пользователей
-        // В реальном приложении нужно добавить пагинацию в репозиторий
-        return Collections.emptyList();
-    }
-
-    @Override
     public boolean updateUserRole(Long userId, Role role) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
@@ -191,18 +177,21 @@ public class AdminServiceImpl implements AdminService {
         return true;
     }
 
+    //TODO: еще в разработке
+    @Override
+    public List<User> getAllUsers(int page, int size) {
+        return Collections.emptyList();
+    }
+
     private long getTotalUsers() {
-        // В реальной реализации - запрос к БД
         return 0;
     }
 
     private long getActiveChallengesCount() {
-        // В реальной реализации - запрос к БД
         return dailyChallengeRepository.findRecent(30).size();
     }
 
     private long getTotalGamesPlayed() {
-        // В реальной реализации - запрос к БД
         return 0;
     }
 

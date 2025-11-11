@@ -21,7 +21,6 @@ public class PurchaseResult {
         return new PurchaseResult(false, message, null);
     }
 
-    // Getters
     public boolean isSuccess() { return success; }
     public String getMessage() { return message; }
     public UserPurchase getPurchase() { return purchase; }

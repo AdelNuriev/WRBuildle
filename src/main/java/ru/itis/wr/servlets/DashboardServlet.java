@@ -36,24 +36,31 @@ public class DashboardServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("=== DASHBOARD SERVLET CALLED ===");
+
         User user = (User) req.getAttribute("currentUser");
+        System.out.println("User in dashboard: " + (user != null ? user.getEmail() : "null"));
+
         if (user == null) {
+            System.out.println("User is NULL - redirecting to login");
             resp.sendRedirect(req.getContextPath() + "/auth/login");
             return;
         }
 
         try {
+            System.out.println("Loading dashboard data...");
             var todayChallenge = challengeService.getTodayChallenge();
             var userStats = statisticsService.getUserStatistics(user.getId());
-            var todayResults = challengeService.getUserResultsForDate(user.getId(), LocalDate.now());
 
             req.setAttribute("todayChallenge", todayChallenge);
             req.setAttribute("userStats", userStats);
-            req.setAttribute("todayResults", todayResults);
-            req.setAttribute("completedBlocks", countCompletedBlocks(todayResults));
 
+            System.out.println("Forwarding to dashboard.jsp");
             req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(req, resp);
+
         } catch (Exception e) {
+            System.out.println("Error in dashboard: " + e.getMessage());
+            e.printStackTrace();
             req.setAttribute("error", "Failed to load dashboard: " + e.getMessage());
             req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(req, resp);
         }

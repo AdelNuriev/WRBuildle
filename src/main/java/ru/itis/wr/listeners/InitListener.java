@@ -10,9 +10,6 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Properties;
 import java.io.InputStream;
 import java.io.IOException;
@@ -71,10 +68,5 @@ public class InitListener implements ServletContextListener {
         } catch (IOException e) {
             throw new RuntimeException("Failed to initialize application context", e);
         }
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        // Очистка ресурсов при завершении приложения
     }
 }

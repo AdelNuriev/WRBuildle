@@ -33,7 +33,6 @@
     }
 }
 
-/* Стили для секции угадывания */
 .guess-section {
     background: linear-gradient(to bottom, #091428, #0a1428);
     border: 2px solid #463714;
@@ -102,7 +101,6 @@
     margin-top: 20px;
 }
 
-/* Стили для дерева предметов */
 .tree-container {
     background: linear-gradient(to bottom, #091428, #0a1428);
     border: 2px solid #463714;
@@ -182,7 +180,6 @@
     font-weight: bold;
 }
 
-/* Стили для отображения предметов */
 .item-display {
     background: linear-gradient(to bottom, #091428, #0a1428);
     border: 2px solid #463714;

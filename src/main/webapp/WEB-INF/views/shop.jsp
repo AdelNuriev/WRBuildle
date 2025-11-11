@@ -1,31 +1,32 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page isELIgnored="false" %>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Магазин - Buildle.gg</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/shop.css">
-    <script src="${pageContext.request.contextPath}/js/shop.js" defer></script>
+    <title>Магазин - WR-Buildle.gg</title>
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/shop.css">
+    <script src="/js/shop.js" defer></script>
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>Buildle.gg</h1>
+        <h1>WR-Buildle.gg</h1>
         <p class="subtitle">League of Legends Wild Rift Item Guessing Game</p>
         <nav class="main-nav">
-            <a href="${pageContext.request.contextPath}/dashboard">Главная</a>
-            <a href="${pageContext.request.contextPath}/daily">Ежедневный режим</a>
-            <a href="${pageContext.request.contextPath}/infinite">Бесконечный режим</a>
-            <a href="${pageContext.request.contextPath}/shop">Магазин</a>
-            <a href="${pageContext.request.contextPath}/profile">Профиль</a>
-            <a href="${pageContext.request.contextPath}/statistics">Статистика</a>
+            <a href="/dashboard">Главная</a>
+            <a href="/daily">Ежедневный режим</a>
+            <a href="/infinite">Бесконечный режим</a>
+            <a href="/shop">Магазин</a>
+            <a href="/profile">Профиль</a>
+            <a href="/statistics">Статистика</a>
             <c:if test="${currentUser.role == 'ADMIN'}">
-                <a href="${pageContext.request.contextPath}/admin">Админ панель</a>
+                <a href="/admin">Админ панель</a>
             </c:if>
-            <a href="${pageContext.request.contextPath}/auth/logout">Выйти</a>
+            <a href="/auth/logout">Выйти</a>
         </nav>
     </header>
 
@@ -79,7 +80,7 @@
                                 <button class="btn-secondary" disabled>Уже куплено</button>
                             </c:when>
                             <c:when test="${currentUser.coins >= item.price}">
-                                <form action="${pageContext.request.contextPath}/shop/purchase" method="post">
+                                <form action="/shop/purchase" method="post">
                                     <input type="hidden" name="itemId" value="${item.id}">
                                     <button type="submit" class="btn-primary">Купить</button>
                                 </form>
@@ -95,7 +96,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Buildle.gg - Not affiliated with Riot Games</p>
+        <p>&copy; 2025 WR-Buildle.gg - Не является собственностью Riot Games</p>
     </footer>
 </div>
 </body>

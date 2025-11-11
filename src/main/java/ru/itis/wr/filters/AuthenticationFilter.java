@@ -1,5 +1,6 @@
 package ru.itis.wr.filters;
 
+import jakarta.servlet.http.HttpFilter;
 import ru.itis.wr.entities.User;
 import ru.itis.wr.services.SecurityService;
 
@@ -11,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebFilter("/*")
-public class AuthenticationFilter implements Filter {
+public class AuthenticationFilter extends HttpFilter {
     private SecurityService securityService;
 
     @Override
@@ -20,49 +21,54 @@ public class AuthenticationFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+        String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        if (path.startsWith("/auth/") || path.startsWith("/css/") ||
-                path.startsWith("/js/") || path.startsWith("/images/") ||
-                path.equals("/") || path.equals("/index.jsp")) {
+        if (path.startsWith("/auth/") ||
+                path.startsWith("/css/") ||
+                path.startsWith("/js/") ||
+                path.startsWith("/images/") ||
+                path.startsWith("/static/") ||
+                path.equals("/") ||
+                path.equals("/index.jsp") ||
+                path.endsWith(".css") ||
+                path.endsWith(".js") ||
+                path.endsWith(".jpg") ||
+                path.endsWith(".png")) {
             chain.doFilter(request, response);
             return;
         }
 
-        String sessionId = extractSessionId(httpRequest);
+        String sessionId = extractSessionId(request);
+
+        User user = null;
+
         if (sessionId != null) {
             try {
-                User user = securityService.getUser(sessionId);
-                if (user != null) {
-                    httpRequest.setAttribute("currentUser", user);
-                    chain.doFilter(request, response);
-                    return;
-                }
+                user = securityService.getUser(sessionId);
             } catch (Exception e) {
-                //сессия невалидна
+                Cookie cookie = new Cookie("sessionId", "");
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                response.addCookie(cookie);
             }
         }
 
-        if (path.startsWith("/api/") || path.startsWith("/admin/") ||
-                path.startsWith("/profile") || path.startsWith("/daily") ||
-                path.startsWith("/infinite") || path.startsWith("/shop")) {
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/auth/login");
-            return;
+        if (user != null) {
+            request.setAttribute("currentUser", user);
+            chain.doFilter(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/auth/login");
         }
-
-        chain.doFilter(request, response);
     }
 
     private String extractSessionId(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("sessionId".equals(cookie.getName())) {
+                if (cookie.getName().equals("sessionId")) {
                     return cookie.getValue();
                 }
             }

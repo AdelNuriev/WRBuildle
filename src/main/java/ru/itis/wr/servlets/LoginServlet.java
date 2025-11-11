@@ -1,13 +1,11 @@
 package ru.itis.wr.servlets;
 
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.itis.wr.exceptions.AuthenticationException;
 import ru.itis.wr.services.SecurityService;
 
 import java.io.IOException;
@@ -30,18 +28,22 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String sessionId = "";
+
         try {
-            sessionId = securityService.loginUser(email, password);
-        } catch (AuthenticationException e) {
+            String sessionId = securityService.loginUser(email, password);
+
+            Cookie cookie = new Cookie("sessionId", sessionId);
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(24 * 60 * 60);
+            cookie.setPath("/");
+            resp.addCookie(cookie);
+
+            String redirectUrl = req.getContextPath() + "/dashboard";
+            resp.sendRedirect(redirectUrl);
+
+        } catch (Exception e) {
             req.setAttribute("error", e.getMessage());
             req.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(req, resp);
-            return;
         }
-
-        Cookie cookie = new Cookie("sessionId", sessionId);
-        cookie.setMaxAge(1000*60);
-        resp.addCookie(cookie);
-        resp.sendRedirect(req.getContextPath() + "/");
     }
 }

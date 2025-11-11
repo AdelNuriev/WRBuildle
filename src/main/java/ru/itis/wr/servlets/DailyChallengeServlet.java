@@ -66,23 +66,7 @@ public class DailyChallengeServlet extends HttpServlet {
 
     private void handleError(HttpServletRequest req, HttpServletResponse resp, Exception e)
             throws ServletException, IOException {
-        if (isAjaxRequest(req)) {
-            sendJsonError(resp, e.getMessage());
-        } else {
-            req.setAttribute("error", "Failed to load challenge: " + e.getMessage());
-            req.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(req, resp);
-        }
-    }
-
-    private boolean isAjaxRequest(HttpServletRequest req) {
-        return "XMLHttpRequest".equals(req.getHeader("X-Requested-With")) ||
-                "application/json".equals(req.getContentType());
-    }
-
-    private void sendJsonError(HttpServletResponse resp, String message) throws IOException {
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        resp.getWriter().write("{\"error\": \"" + message + "\"}");
+        req.setAttribute("error", "Failed to load challenge: " + e.getMessage());
+        req.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(req, resp);
     }
 }

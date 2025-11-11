@@ -133,7 +133,6 @@ public class ChallengeServiceImpl implements ChallengeService {
         repositoryHelper.putUserResult(userResultRepository, userResult);
         updateUserStatistics(userId, userResult);
 
-        // Возвращаем подсказку с атрибутами
         String hint = isCorrect ? "Correct!" : getAttributesHint(block.getTargetItemId(), itemId);
 
         return new GuessResult(isCorrect, hint, userResult.getScore(), userResult);

@@ -1,5 +1,6 @@
 package ru.itis.wr.filters;
 
+import jakarta.servlet.http.HttpFilter;
 import ru.itis.wr.entities.User;
 import ru.itis.wr.entities.Role;
 
@@ -10,16 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebFilter("/admin/*")
-public class AdminFilter implements Filter {
+public class AdminFilter extends HttpFilter {
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        User user = (User) httpRequest.getAttribute("currentUser");
+        User user = (User) request.getAttribute("currentUser");
         if (user == null || user.getRole() != Role.ADMIN) {
-            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Admin access required");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Admin access required");
             return;
         }
 

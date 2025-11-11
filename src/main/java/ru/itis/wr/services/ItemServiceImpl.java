@@ -135,7 +135,6 @@ public class ItemServiceImpl implements ItemService {
                 ItemTree childTree = new ItemTree(component);
                 tree.addComponent(childTree);
 
-                // Рекурсивно добавляем компоненты компонента
                 buildItemTree(childTree, component.getId());
             }
         }

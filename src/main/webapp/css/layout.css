@@ -1,4 +1,3 @@
-/* Основные стили макета */
 * {
     margin: 0;
     padding: 0;
@@ -70,7 +69,6 @@ footer {
     border-top: 2px solid #463714;
 }
 
-/* Общие классы кнопок */
 .btn-primary {
     padding: 12px 24px;
     background: linear-gradient(to bottom, #c8aa6e, #785a28);
@@ -114,7 +112,6 @@ footer {
     color: #1e2328;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     body {
         padding: 10px;

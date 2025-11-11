@@ -17,7 +17,6 @@ public interface AdminService {
 
     DailyChallenge createDailyChallenge(LocalDate date, Long adminId);
     boolean createChallengeBlock(Long challengeId, ChallengeBlockCreateRequest request);
-    boolean updateChallengeBlock(Long blockId, ChallengeBlockUpdateRequest request);
 
     Map<String, Object> getSystemStatistics();
     List<Map<String, Object>> getRecentChallenges(int days);

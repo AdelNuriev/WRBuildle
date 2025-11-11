@@ -13,6 +13,12 @@ public class DatabaseConnectionImpl implements DatabaseConnection {
         this.url = url;
         this.user = user;
         this.password = password;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("❌ PostgreSQL JDBC Driver not found. Add it to your dependencies.", e);
+        }
     }
 
     @Override
