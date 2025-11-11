@@ -1,0 +1,360 @@
+.challenge-page {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.challenge-page h2 {
+    text-align: center;
+    color: #f0e6d2;
+    margin-bottom: 10px;
+}
+
+.completed-banner {
+    background: linear-gradient(to right, #c8aa6e, #f0e6d2);
+    color: #1e2328;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.challenge-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .challenge-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Стили для секции угадывания */
+.guess-section {
+    background: linear-gradient(to bottom, #091428, #0a1428);
+    border: 2px solid #463714;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.guess-section h3 {
+    color: #f0e6d2;
+    margin-bottom: 15px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 12px;
+    background: #1e2328;
+    border: 1px solid #463714;
+    border-radius: 5px;
+    color: #f0e6d2;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: #c8aa6e;
+}
+
+.items-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.item-option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #1e2328;
+    border: 1px solid #463714;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.item-option:hover {
+    background: #463714;
+    border-color: #c8aa6e;
+}
+
+.item-icon-small {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.item-cost {
+    margin-left: auto;
+    color: #c8aa6e;
+    font-weight: bold;
+}
+
+.guess-form {
+    margin-top: 20px;
+}
+
+/* Стили для дерева предметов */
+.tree-container {
+    background: linear-gradient(to bottom, #091428, #0a1428);
+    border: 2px solid #463714;
+    border-radius: 10px;
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.tree-node {
+    margin-bottom: 10px;
+}
+
+.tree-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #1e2328;
+    border: 1px solid #463714;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.tree-components {
+    margin-left: 30px;
+    border-left: 2px solid #463714;
+    padding-left: 15px;
+}
+
+.item-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.unknown-item {
+    padding: 10px;
+    background: #463714;
+    border-radius: 5px;
+    text-align: center;
+    color: #a09b8c;
+    font-style: italic;
+}
+
+.missing-item, .imposter-item {
+    position: relative;
+    border: 2px dashed #c8aa6e !important;
+}
+
+.question-mark {
+    width: 40px;
+    height: 40px;
+    background: #c8aa6e;
+    color: #1e2328;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.imposter-mark {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Стили для отображения предметов */
+.item-display {
+    background: linear-gradient(to bottom, #091428, #0a1428);
+    border: 2px solid #463714;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.item-card {
+    display: inline-block;
+    padding: 20px;
+}
+
+.item-icon-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.item-rarity {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.item-rarity.COMMON { background: #a09b8c; color: #1e2328; }
+.item-rarity.BOOT { background: #c8aa6e; color: #1e2328; }
+.item-rarity.EPIC { background: #c8aa6e; color: #1e2328; }
+.item-rarity.MYTHICAL { background: #ff6b6b; color: white; }
+.item-rarity.LEGENDARY { background: #ffd700; color: #1e2328; }
+
+.item-attributes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.attribute-tag {
+    background: #463714;
+    color: #c8aa6e;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+/* Стили для ввода стоимости */
+.cost-input-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.cost-input {
+    padding: 12px;
+    background: #1e2328;
+    border: 1px solid #463714;
+    border-radius: 5px;
+    color: #f0e6d2;
+    font-size: 1rem;
+    width: 150px;
+}
+
+.gold-symbol {
+    color: #c8aa6e;
+    font-weight: bold;
+}
+
+.cost-hints {
+    background: #1e2328;
+    border: 1px solid #463714;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.cost-hints ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.cost-hints li {
+    padding: 5px 0;
+    color: #a09b8c;
+    border-bottom: 1px solid #463714;
+}
+
+.cost-hints li:last-child {
+    border-bottom: none;
+}
+
+/* Стили для атрибутов */
+.attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.attribute-card {
+    background: #1e2328;
+    border: 1px solid #463714;
+    border-radius: 5px;
+    padding: 15px;
+    text-align: center;
+}
+
+.attribute-card h4 {
+    color: #a09b8c;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.attribute-value {
+    color: #f0e6d2;
+    font-weight: bold;
+}
+
+.attempts-info {
+    background: #463714;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.hint-text {
+    color: #c8aa6e;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+/* Результаты угадывания */
+.guess-result, .guess-feedback {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.guess-result.correct, .guess-feedback.correct {
+    background: rgba(200, 170, 110, 0.2);
+    border: 1px solid #c8aa6e;
+    color: #c8aa6e;
+}
+
+.guess-result.incorrect, .guess-feedback.incorrect {
+    background: rgba(255, 71, 87, 0.2);
+    border: 1px solid #ff4757;
+    color: #ff4757;
+}
+
+/* Контролы сложности */
+.image-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+#difficulty {
+    width: 150px;
+}
+
+#difficultyLabel {
+    color: #c8aa6e;
+    font-weight: bold;
+    min-width: 100px;
+}
