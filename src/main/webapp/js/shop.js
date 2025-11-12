@@ -15,7 +15,6 @@ function filterItems(type) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize shop filters
     const categoryButtons = document.querySelectorAll('.category-btn');
     categoryButtons.forEach(button => {
         button.addEventListener('click', function() {

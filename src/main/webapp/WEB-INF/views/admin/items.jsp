@@ -118,7 +118,7 @@
 
                         <div class="item-actions">
                             <button onclick="editItem(${item.id})" class="btn-small">Редактировать</button>
-                            <form action="${pageContext.request.contextPath}/admin/update-item" method="post"
+                            <form action="/admin/update-item" method="post"
                                   style="display: inline;">
                                 <input type="hidden" name="itemId" value="${item.id}">
                                 <input type="hidden" name="isActive" value="false">

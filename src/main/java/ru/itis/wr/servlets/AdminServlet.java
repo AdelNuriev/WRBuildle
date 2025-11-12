@@ -40,10 +40,6 @@ public class AdminServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getAttribute("currentUser");
-        if (user == null || user.getRole() != Role.ADMIN) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Admin access required");
-            return;
-        }
 
         String path = req.getPathInfo();
         if (path == null) path = "";
@@ -129,7 +125,7 @@ public class AdminServlet extends HttpServlet {
             throws ServletException, IOException {
         var challenges = adminService.getChallengesForDate(LocalDate.now());
         req.setAttribute("challenges", challenges);
-        req.getRequestDispatcher("/WEB-INF/views/admin/challenges.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/admin/dashboard.jsp").forward(req, resp);
     }
 
     private void showChallengeCreation(HttpServletRequest req, HttpServletResponse resp)

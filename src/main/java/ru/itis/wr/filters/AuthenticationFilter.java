@@ -37,6 +37,7 @@ public class AuthenticationFilter extends HttpFilter {
                 path.endsWith(".js") ||
                 path.endsWith(".jpg") ||
                 path.endsWith(".png")) {
+
             chain.doFilter(request, response);
             return;
         }

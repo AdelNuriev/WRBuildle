@@ -23,7 +23,7 @@
             <a href="/profile">Профиль</a>
             <a href="/statistics">Статистика</a>
             <c:if test="${currentUser.role == 'ADMIN'}">
-                <a href="${pageContext.request.contextPath}/admin">Админ панель</a>
+                <a href="/admin">Админ панель</a>
             </c:if>
             <a href="/auth/logout">Выйти</a>
         </nav>

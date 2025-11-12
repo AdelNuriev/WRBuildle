@@ -10,9 +10,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 
-@WebServlet({"/dashboard", "/", ""})
+@WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
     private ChallengeService challengeService;
     private StatisticsService statisticsService;
@@ -22,13 +21,6 @@ public class DashboardServlet extends HttpServlet {
         try {
             challengeService = (ChallengeService) getServletContext().getAttribute("challengeService");
             statisticsService = (StatisticsService) getServletContext().getAttribute("statisticsService");
-
-            if (challengeService == null) {
-                throw new ServletException("ChallengeService not found in ServletContext");
-            }
-            if (statisticsService == null) {
-                throw new ServletException("StatisticsService not found in ServletContext");
-            }
         } catch (Exception e) {
             throw new ServletException("Failed to initialize DashboardServlet", e);
         }
@@ -36,30 +28,18 @@ public class DashboardServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("=== DASHBOARD SERVLET CALLED ===");
-
         User user = (User) req.getAttribute("currentUser");
-        System.out.println("User in dashboard: " + (user != null ? user.getEmail() : "null"));
-
-        if (user == null) {
-            System.out.println("User is NULL - redirecting to login");
-            resp.sendRedirect(req.getContextPath() + "/auth/login");
-            return;
-        }
 
         try {
-            System.out.println("Loading dashboard data...");
             var todayChallenge = challengeService.getTodayChallenge();
             var userStats = statisticsService.getUserStatistics(user.getId());
 
             req.setAttribute("todayChallenge", todayChallenge);
             req.setAttribute("userStats", userStats);
 
-            System.out.println("Forwarding to dashboard.jsp");
             req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(req, resp);
 
         } catch (Exception e) {
-            System.out.println("Error in dashboard: " + e.getMessage());
             e.printStackTrace();
             req.setAttribute("error", "Failed to load dashboard: " + e.getMessage());
             req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(req, resp);

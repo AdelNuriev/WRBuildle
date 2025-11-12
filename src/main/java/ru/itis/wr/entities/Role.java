@@ -1,8 +1,8 @@
 package ru.itis.wr.entities;
 
 public enum Role {
-    USER("Пользователь"),
-    ADMIN("Админ");
+    USER("USER"),
+    ADMIN("ADMIN");
 
     private final String displayName;
 
