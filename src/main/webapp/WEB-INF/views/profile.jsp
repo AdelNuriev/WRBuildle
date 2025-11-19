@@ -67,7 +67,7 @@
                     <p>
                         <c:choose>
                             <c:when test="${userStats.totalGames > 0}">
-                                <fmt:formatNumber value="${(userStats.gamesWon * 100) / userStats.totalGames}" pattern="#.##"/>%
+                                <fmt:formatNumber value="${Math.round((userStats.gamesWon * 100) / userStats.totalGames)}" pattern="#.##"/>%
                             </c:when>
                             <c:otherwise>
                                 0%
@@ -94,7 +94,7 @@
                                 <c:if test="${item.purchaseId == equipped.id}">
                                     <div class="equipped-item">
                                         <img src="${item.shopItem.imageUrl}" alt="${item.shopItem.name}"
-                                             onerror="this.src='/images/shop/default-item.png'">
+                                             onerror="this.src='/images/system/default-item.png'">
                                         <span>${item.shopItem.name}</span>
                                         <small>${item.shopItem.type.displayName}</small>
                                     </div>
@@ -114,8 +114,7 @@
                             <c:if test="${item.shopItem.type == 'ICON'}">
                                 <div class="customization-item ${item.equipped ? 'equipped' : ''}">
                                     <img src="${item.shopItem.imageUrl}" alt="${item.shopItem.name}"
-                                         onerror="this.src='/images/shop/default-item.png'">
-                                    <div class="item-name">${item.shopItem.name}</div>
+                                         onerror="this.src='/images/system/default-item.png'">
                                     <form action="/profile/equip" method="post">
                                         <input type="hidden" name="itemId" value="${item.purchaseId}">
                                         <button type="submit" class="btn-small ${item.equipped ? 'btn-equipped' : 'btn-unequipped'}">
@@ -148,8 +147,7 @@
                             <c:if test="${item.shopItem.type == 'BACKGROUND'}">
                                 <div class="customization-item ${item.equipped ? 'equipped' : ''}">
                                     <img src="${item.shopItem.imageUrl}" alt="${item.shopItem.name}"
-                                         onerror="this.src='/images/shop/default-item.png'">
-                                    <div class="item-name">${item.shopItem.name}</div>
+                                         onerror="this.src='/images/system/default-item.png'">
                                     <form action="/profile/equip" method="post">
                                         <input type="hidden" name="itemId" value="${item.purchaseId}">
                                         <button type="submit" class="btn-small ${item.equipped ? 'btn-equipped' : 'btn-unequipped'}">
@@ -182,8 +180,7 @@
                             <c:if test="${item.shopItem.type == 'BORDER'}">
                                 <div class="customization-item ${item.equipped ? 'equipped' : ''}">
                                     <img src="${item.shopItem.imageUrl}" alt="${item.shopItem.name}"
-                                         onerror="this.src='/images/shop/default-item.png'">
-                                    <div class="item-name">${item.shopItem.name}</div>
+                                         onerror="this.src='/images/system/default-item.png'">
                                     <form action="/profile/equip" method="post">
                                         <input type="hidden" name="itemId" value="${item.purchaseId}">
                                         <button type="submit" class="btn-small ${item.equipped ? 'btn-equipped' : 'btn-unequipped'}">

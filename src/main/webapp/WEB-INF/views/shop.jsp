@@ -36,7 +36,7 @@
 
         <div class="shop-header">
             <div class="user-coins">
-                <h3>Ваши монеты: <span id="userCoins">${currentUser.coins}</span> 🪙</h3>
+                <h3>Ваши монеты: <span id="userCoins">${currentUser.coins}</span> <img src="/images/system/coin.png" width="10px" height="20"></h3>
             </div>
             <div class="shop-actions">
                 <a href="/profile#inventory" class="btn-secondary">Мой инвентарь</a>

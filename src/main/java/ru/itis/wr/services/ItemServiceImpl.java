@@ -29,13 +29,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> searchItems(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return new ArrayList<>();
-        }
-        return itemRepository.findByNameContaining(query.trim());
-    }
-
     public void addRecipe(ItemRecipe recipe) {
         if (recipe.getParentItemId().equals(recipe.getComponentItemId())) {
             throw new IllegalArgumentException("Cannot add item as component to itself");
@@ -51,21 +44,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void removeRecipe(Long parentItemId, Long componentItemId) {
         itemRecipeRepository.deleteByParentAndComponent(parentItemId, componentItemId);
-    }
-
-    @Override
-    public boolean isRecipeExists(Long parentItemId, Long componentItemId) {
-        return itemRecipeRepository.existsByParentAndComponent(parentItemId, componentItemId);
-    }
-
-    @Override
-    public List<Item> getItemsByRarity(ItemRarity rarity) {
-        return itemRepository.findByRarity(rarity);
-    }
-
-    @Override
-    public List<Item> getItemsByCostRange(int minCost, int maxCost) {
-        return itemRepository.findByCostRange(minCost, maxCost);
     }
 
     @Override
@@ -137,19 +115,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> getItemsBuiltFrom(Long componentId) {
-        List<ItemRecipe> recipes = itemRecipeRepository.findByComponentItemId(componentId);
-        List<Item> items = new ArrayList<>();
-
-        for (ItemRecipe recipe : recipes) {
-            itemRepository.findById(recipe.getParentItemId())
-                    .ifPresent(items::add);
-        }
-
-        return items;
-    }
-
-    @Override
     public Item createItem(Item item) {
         if (item.getName() == null || item.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Item name is required");
@@ -184,20 +149,6 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.deactivate(itemId);
     }
 
-    private void buildItemTree(ItemTree tree, Long itemId) {
-        List<ItemRecipe> recipes = itemRecipeRepository.findByParentItemId(itemId);
-
-        for (ItemRecipe recipe : recipes) {
-            Optional<Item> componentOpt = itemRepository.findById(recipe.getComponentItemId());
-            if (componentOpt.isPresent()) {
-                Item component = componentOpt.get();
-                ItemTree childTree = new ItemTree(component);
-                tree.addComponent(childTree);
-
-                buildItemTree(childTree, component.getId());
-            }
-        }
-    }
 
     @Override
     public void saveRecipeTree(Long rootItemId, ItemTree tree) {
@@ -238,28 +189,6 @@ public class ItemServiceImpl implements ItemService {
                 }
             }
         }
-    }
-
-    private ItemTree findComponentTree(ItemTree tree, Long componentId) {
-        if (tree.getComponents() != null) {
-            for (ItemTree component : tree.getComponents()) {
-                if (component.getItem().getId().equals(componentId)) {
-                    return component;
-                }
-            }
-        }
-        return null;
-    }
-
-    private void updateRecipeQuantity(Long parentItemId, Long componentItemId, Integer quantity) {
-        itemRecipeRepository.deleteByParentAndComponent(parentItemId, componentItemId);
-
-        ItemRecipe recipe = new ItemRecipe();
-        recipe.setParentItemId(parentItemId);
-        recipe.setComponentItemId(componentItemId);
-        recipe.setQuantity(quantity);
-
-        itemRecipeRepository.save(recipe);
     }
 
     @Override

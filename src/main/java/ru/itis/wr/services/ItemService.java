@@ -11,16 +11,11 @@ import java.util.Optional;
 public interface ItemService {
     List<Item> getAllItems();
     Optional<Item> getItemById(Long id);
-    List<Item> searchItems(String query);
-    List<Item> getItemsByRarity(ItemRarity rarity);
-    List<Item> getItemsByCostRange(int minCost, int maxCost);
     void addRecipe(ItemRecipe recipe);
     void removeRecipe(Long parentItemId, Long componentItemId);
     ItemTree getItemTree(Long itemId);
     List<Item> getItemComponents(Long itemId);
     public ItemTree getFullItemTree(Long itemId);
-    List<Item> getItemsBuiltFrom(Long componentId);
-    public boolean isRecipeExists(Long parentItemId, Long componentItemId);
     void saveRecipeTree(Long rootItemId, ItemTree tree);
     void clearItemRecipe(Long itemId);
     Item createItem(Item item);

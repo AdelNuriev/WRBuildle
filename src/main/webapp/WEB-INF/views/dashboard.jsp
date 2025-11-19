@@ -39,7 +39,7 @@
                 </div>
                 <div class="stat-card">
                     <h3>Монеты</h3>
-                    <p class="stat-value">${currentUser.coins}</p>
+                    <p class="stat-value">${currentUser.coins}   <img src="/images/system/coin.png" width="20px" height="30px"></p>
                 </div>
                 <div class="stat-card">
                     <h3>Ежедневная серия</h3>

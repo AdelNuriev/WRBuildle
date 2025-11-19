@@ -50,7 +50,7 @@
                         <span class="stat-label">Процент побед</span>
                         <span class="stat-value">
                             <c:if test="${userStats.totalGames > 0}">
-                                ${(userStats.gamesWon / userStats.totalGames * 100)}%
+                                ${Math.round((userStats.gamesWon / userStats.totalGames * 100))}%
                             </c:if>
                             <c:if test="${userStats.totalGames == 0}">0%</c:if>
                         </span>

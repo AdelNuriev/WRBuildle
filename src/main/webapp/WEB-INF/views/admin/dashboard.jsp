@@ -44,7 +44,7 @@
             </div>
 
             <div class="admin-stat-card">
-                <h3>Активные вызовы</h3>
+                <h3>Всего вызовов</h3>
                 <p class="stat-number">${systemStats.activeChallenges}</p>
             </div>
 
