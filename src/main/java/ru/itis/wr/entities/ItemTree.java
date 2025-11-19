@@ -5,28 +5,27 @@ import java.util.List;
 import java.util.Map;
 
 public class ItemTree {
-    private Item rootItem;
+    private Item item;
     private List<ItemTree> components;
-    private int depth;
 
-    public ItemTree(Item rootItem) {
-        this.rootItem = rootItem;
+    public ItemTree() {};
+
+    public ItemTree(Item item) {
+        this.item = item;
         this.components = new ArrayList<>();
-        this.depth = 0;
     }
 
-    public ItemTree(Item rootItem, int depth) {
-        this.rootItem = rootItem;
+    public ItemTree(Item item, int depth) {
+        this.item = item;
         this.components = new ArrayList<>();
-        this.depth = depth;
     }
 
-    public Item getRootItem() {
-        return rootItem;
+    public Item getItem() {
+        return item;
     }
 
-    public void setRootItem(Item rootItem) {
-        this.rootItem = rootItem;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public List<ItemTree> getComponents() {
@@ -35,14 +34,6 @@ public class ItemTree {
 
     public void setComponents(List<ItemTree> components) {
         this.components = components;
-    }
-
-    public int getDepth() {
-        return depth;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
     }
 
     public void addComponent(ItemTree component) {
@@ -58,7 +49,7 @@ public class ItemTree {
     }
 
     public int getTotalComponents() {
-        int count = 1; // Сам предмет
+        int count = 1;
         for (ItemTree component : components) {
             count += component.getTotalComponents();
         }
@@ -67,7 +58,7 @@ public class ItemTree {
 
     public List<Item> getAllItemsInTree() {
         List<Item> items = new ArrayList<>();
-        items.add(rootItem);
+        items.add(item);
 
         for (ItemTree component : components) {
             items.addAll(component.getAllItemsInTree());
@@ -77,8 +68,8 @@ public class ItemTree {
     }
 
     public Item findItemInTree(Long itemId) {
-        if (rootItem.getId() == itemId) {
-            return rootItem;
+        if (item.getId().equals(itemId)) {
+            return item;
         }
 
         for (ItemTree component : components) {
@@ -90,14 +81,6 @@ public class ItemTree {
         return null;
     }
 
-    public int getMaxDepth() {
-        int maxDepth = this.depth;
-        for (ItemTree component : components) {
-            maxDepth = Math.max(maxDepth, component.getMaxDepth());
-        }
-        return maxDepth;
-    }
-
     @Override
     public String toString() {
         return toStringWithIndent(0);
@@ -107,8 +90,8 @@ public class ItemTree {
         StringBuilder sb = new StringBuilder();
         String indentStr = "  ".repeat(indent);
 
-        sb.append(indentStr).append("└── ").append(rootItem.getName())
-                .append(" (").append(rootItem.getCost()).append("g)");
+        sb.append(indentStr).append("└── ").append(item.getName())
+                .append(" (").append(item.getCost()).append("g)");
 
         for (ItemTree component : components) {
             sb.append("\n").append(component.toStringWithIndent(indent + 2));
@@ -120,11 +103,11 @@ public class ItemTree {
     public Object toJsonStructure() {
         return Map.of(
                 "item", Map.of(
-                        "id", rootItem.getId(),
-                        "name", rootItem.getName(),
-                        "cost", rootItem.getCost(),
-                        "rarity", rootItem.getRarity().name(),
-                        "iconUrl", rootItem.getIconUrl()
+                        "id", item.getId(),
+                        "name", item.getName(),
+                        "cost", item.getCost(),
+                        "rarity", item.getRarity().name(),
+                        "iconUrl", item.getIconUrl()
                 ),
                 "components", components.stream()
                         .map(ItemTree::toJsonStructure)

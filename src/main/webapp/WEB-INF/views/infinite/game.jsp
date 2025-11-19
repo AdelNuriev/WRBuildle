@@ -9,6 +9,7 @@
     <title>Бесконечный режим - WR-Buildle.gg</title>
     <link rel="stylesheet" href="/css/layout.css">
     <link rel="stylesheet" href="/css/challenge.css">
+    <link rel="stylesheet" href="/css/attributes-challenge.css">
     <script src="/js/infinite-game.js" defer></script>
 </head>
 <body>
@@ -31,48 +32,60 @@
     </header>
 
     <main class="infinite-game">
-        <h2>Бесконечный режим</h2>
-
-        <div class="game-stats">
-            <div class="stat">Счет: <span id="currentScore">${currentGame.score}</span></div>
-            <div class="stat">Серия: <span id="currentStreak">${currentGame.streak}</span></div>
-            <div class="stat">Подсказки: <span id="hintsUsed">${currentGame.hintsUsed}</span></div>
+        <div class="game-header">
+            <h2>Бесконечный режим - Угадай по атрибутам</h2>
+            <div class="game-stats">
+                <div class="stat">Счет: <span id="currentScore">${currentGame.score}</span></div>
+                <div class="stat">Серия: <span id="currentStreak">${currentGame.streak}</span></div>
+                <div class="stat">Попытки: <span id="attemptsCount">0</span></div>
+                <div class="stat">Раунд: <span id="currentRound">1</span></div>
+            </div>
         </div>
 
-        <c:if test="${not empty guessResult}">
-            <div class="guess-result ${guessResult.correct ? 'correct' : 'incorrect'}">
-                    ${guessResult.message}
-                <c:if test="${guessResult.correct}">
-                    +${guessResult.scoreEarned} очков!
-                </c:if>
+        <c:if test="${not empty error}">
+            <div class="error-message">
+                    ${error}
             </div>
         </c:if>
 
-        <div class="game-content">
-            <div class="attributes-section">
-                <h3>Характеристики предмета:</h3>
-                <div id="attributesList" class="attributes-list"></div>
-
-                <c:if test="${not empty hint}">
-                    <div class="hint-section">
-                        <h4>Подсказка:</h4>
-                        <p>${hint.attribute}: ${hint.value}</p>
+        <div class="attributes-challenge-content" id="gameContent">
+            <div class="target-properties">
+                <h3>Свойства загаданного предмета</h3>
+                <div class="properties-grid">
+                    <div class="property-card">
+                        <div class="property-name">Редкость</div>
+                        <div class="property-value unknown" id="rarityProperty">???</div>
                     </div>
-                </c:if>
-
-                <form action="/infinite/hint" method="post">
-                    <button type="submit" class="btn-secondary">Использовать подсказку</button>
-                </form>
+                    <div class="property-card">
+                        <div class="property-name">Тип эффекта</div>
+                        <div class="property-value unknown" id="effectTypeProperty">???</div>
+                    </div>
+                    <div class="property-card">
+                        <div class="property-name">Стоимость</div>
+                        <div class="property-value unknown" id="costProperty">???</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="guess-section">
-                <input type="text" id="searchInput" placeholder="Начните вводить название предмета...">
-                <div id="itemsList" class="items-list"></div>
+            <div class="guess-interface">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Начните вводить название предмета...">
+                    <div id="itemsList" class="items-grid"></div>
+                </div>
+            </div>
 
-                <form action="/infinite/guess" method="post" class="guess-form">
-                    <input type="hidden" name="itemId" id="selectedItemId">
-                    <button type="submit" class="btn-primary">Сделать предположение</button>
-                </form>
+            <div class="guess-history-section">
+                <h3>История попыток</h3>
+                <div class="guess-history-table">
+                    <div class="table-header">
+                        <div class="header-cell icon-header">Иконка</div>
+                        <div class="header-cell attributes-header">Свойства</div>
+                        <div class="header-cell effect-type-header">Тип эффекта</div>
+                        <div class="header-cell rarity-header">Редкость</div>
+                        <div class="header-cell cost-header">Стоимость</div>
+                    </div>
+                    <div id="guessHistory" class="table-body"></div>
+                </div>
             </div>
         </div>
     </main>
@@ -81,5 +94,14 @@
         <p>&copy; 2025 WR-Buildle.gg - Не является собственностью Riot Games</p>
     </footer>
 </div>
+
+<script>
+    window.gameData = {
+        currentScore: ${currentGame.score},
+        currentStreak: ${currentGame.streak},
+        targetItemId: ${targetItemId},
+        currentRound: 1
+    };
+</script>
 </body>
 </html>

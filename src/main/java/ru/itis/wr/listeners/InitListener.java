@@ -31,10 +31,11 @@ public class InitListener implements ServletContextListener {
             String password = properties.getProperty("password");
 
             DatabaseConnection databaseConnection = new DatabaseConnectionImpl(url, username, password);
+            RepositoryHelper repositoryHelper = new RepositoryHelper();
 
             UserRepository userRepository = new UserRepositoryImpl(databaseConnection);
             SessionRepository sessionRepository = new SessionRepositoryImpl(databaseConnection);
-            ItemRepository itemRepository = new ItemRepositoryImpl(databaseConnection);
+            ItemRepository itemRepository = new ItemRepositoryImpl(databaseConnection, repositoryHelper);
             ItemRecipeRepository itemRecipeRepository = new ItemRecipeRepositoryImpl(databaseConnection);
             DailyChallengeRepository dailyChallengeRepository = new DailyChallengeRepositoryImpl(databaseConnection);
             ChallengeBlockRepository challengeBlockRepository = new ChallengeBlockRepositoryImpl(databaseConnection);
@@ -42,14 +43,15 @@ public class InitListener implements ServletContextListener {
             ShopItemRepository shopItemRepository = new ShopItemRepositoryImpl(databaseConnection);
             UserPurchaseRepository userPurchaseRepository = new UserPurchaseRepositoryImpl(databaseConnection);
             UserStatisticsRepository userStatisticsRepository = new UserStatisticsRepositoryImpl(databaseConnection);
+            InfiniteGameRepository infiniteGameRepository = new InfiniteGameRepositoryImpl(databaseConnection, itemRepository, repositoryHelper);
 
-            RepositoryHelper repositoryHelper = new RepositoryHelper();
+
 
             SecurityService securityService = new SecurityServiceImpl(userRepository, sessionRepository);
             ItemService itemService = new ItemServiceImpl(itemRepository, itemRecipeRepository);
             ChallengeService challengeService = new ChallengeServiceImpl(
                     dailyChallengeRepository, challengeBlockRepository, userResultRepository,
-                    itemService, userStatisticsRepository, repositoryHelper
+                    itemService, userStatisticsRepository, repositoryHelper, infiniteGameRepository, itemRepository, userRepository
             );
             ShopService shopService = new ShopServiceImpl(shopItemRepository, userPurchaseRepository, userRepository);
             StatisticsService statisticsService = new StatisticsServiceImpl(userResultRepository,

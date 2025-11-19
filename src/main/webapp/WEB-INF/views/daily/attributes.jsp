@@ -9,6 +9,7 @@
     <title>Угадай по атрибутам - WR-Buildle.gg</title>
     <link rel="stylesheet" href="/css/layout.css">
     <link rel="stylesheet" href="/css/challenge.css">
+    <link rel="stylesheet" href="/css/attributes-challenge.css">
     <script src="/js/attributes-challenge.js" defer></script>
 </head>
 <body>
@@ -31,7 +32,10 @@
     </header>
 
     <main class="challenge-page">
-        <h2>Угадайте предмет по характеристикам</h2>
+        <div class="challenge-header">
+            <h2>Угадайте предмет по атрибутам</h2>
+            <div class="attempts-counter" id="attemptsCounter">0 попыток</div>
+        </div>
 
         <c:if test="${userResult.completed}">
             <div class="completed-banner">
@@ -39,64 +43,45 @@
             </div>
         </c:if>
 
-        <div class="challenge-content">
-            <div class="attributes-section">
-                <h3>Характеристики загаданного предмета:</h3>
-
-                <div class="attributes-grid">
-                    <div class="attribute-card">
-                        <h4>Стоимость</h4>
-                        <div class="attribute-value">${challenge.targetItem.cost} золота</div>
+        <div class="attributes-challenge-content">
+            <div class="target-properties">
+                <h3>Свойства загаданного предмета</h3>
+                <div class="properties-grid">
+                    <div class="property-card">
+                        <div class="property-name">Редкость</div>
+                        <div class="property-value unknown" id="rarityProperty">???</div>
                     </div>
-
-                    <div class="attribute-card">
-                        <h4>Редкость</h4>
-                        <div class="attribute-value ${challenge.targetItem.rarity}">
-                            ${challenge.targetItem.rarity.displayName}
-                        </div>
+                    <div class="property-card">
+                        <div class="property-name">Тип эффекта</div>
+                        <div class="property-value unknown" id="effectTypeProperty">???</div>
                     </div>
-
-                    <div class="attribute-card">
-                        <h4>Основные характеристики</h4>
-                        <div class="attribute-value">
-                            <c:forEach var="attr" items="${challenge.targetItem.attributes}" varStatus="status">
-                                ${attr.displayName}<c:if test="${!status.last}">, </c:if>
-                            </c:forEach>
-                        </div>
+                    <div class="property-card">
+                        <div class="property-name">Стоимость</div>
+                        <div class="property-value unknown" id="costProperty">???</div>
                     </div>
-
-                    <div class="attribute-card">
-                        <h4>Тип предмета</h4>
-                        <div class="attribute-value">
-                            <c:choose>
-                                <c:when test="${challenge.targetItem.cost >= 3000}">Легендарный</c:when>
-                                <c:when test="${challenge.targetItem.cost >= 2000}">Мифический</c:when>
-                                <c:when test="${challenge.targetItem.cost >= 1000}">Эпический</c:when>
-                                <c:when test="${challenge.targetItem.name.contains('Boots')}">Сапоги</c:when>
-                                <c:otherwise>Обычный</c:otherwise>
-                            </c:choose>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="attempts-info">
-                    <p>Попыток использовано: ${userResult.attempts}</p>
-                    <c:if test="${userResult.attempts > 0 && !userResult.completed}">
-                        <p class="hint-text">Подсказка: предмет связан с ${challenge.targetItem.attributes[0].displayName}</p>
-                    </c:if>
                 </div>
             </div>
 
-            <div class="guess-section">
-                <input type="text" id="searchInput" placeholder="Начните вводить название предмета...">
-                <div id="itemsList" class="items-list"></div>
+            <div class="guess-interface">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Начните вводить название предмета..."
+                           onkeyup="searchItems()" ${userResult.completed ? 'disabled' : ''}>
+                    <div id="itemsList" class="items-grid"></div>
+                </div>
+            </div>
 
-                <form action="/guess/attributes" method="post" class="guess-form">
-                    <input type="hidden" name="itemId" id="selectedItemId">
-                    <button type="submit" ${userResult.completed ? 'disabled' : ''} class="btn-primary">
-                        ${userResult.completed ? 'Завершено' : 'Сделать предположение'}
-                    </button>
-                </form>
+            <div class="guess-history-section">
+                <h3>История попыток</h3>
+                <div class="guess-history-table">
+                    <div class="table-header">
+                        <div class="header-cell icon-header">Иконка</div>
+                        <div class="header-cell attributes-header">Свойства</div>
+                        <div class="header-cell effect-type-header">Тип эффекта</div>
+                        <div class="header-cell rarity-header">Редкость</div>
+                        <div class="header-cell cost-header">Стоимость</div>
+                    </div>
+                    <div id="guessHistory" class="table-body"></div>
+                </div>
             </div>
         </div>
     </main>
@@ -105,5 +90,12 @@
         <p>&copy; 2025 WR-Buildle.gg - Не является собственностью Riot Games</p>
     </footer>
 </div>
+
+<script>
+    window.challengeData = {
+        completed: ${userResult.completed},
+        targetItemId: ${targetItemId}
+    };
+</script>
 </body>
 </html>

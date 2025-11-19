@@ -16,6 +16,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ItemService itemService;
     private final UserStatisticsRepository userStatisticsRepository;
     private final RepositoryHelper repositoryHelper;
+    private final InfiniteGameRepository infiniteGameRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     private static final int BASE_SCORE = 100;
 
@@ -24,13 +27,150 @@ public class ChallengeServiceImpl implements ChallengeService {
                                 UserResultRepository userResultRepository,
                                 ItemService itemService,
                                 UserStatisticsRepository userStatisticsRepository,
-                                RepositoryHelper repositoryHelper) {
+                                RepositoryHelper repositoryHelper,
+                                InfiniteGameRepository infiniteGameRepository,
+                                ItemRepository itemRepository,
+                                UserRepository userRepository) {
         this.dailyChallengeRepository = dailyChallengeRepository;
         this.challengeBlockRepository = challengeBlockRepository;
         this.userResultRepository = userResultRepository;
         this.itemService = itemService;
         this.userStatisticsRepository = userStatisticsRepository;
         this.repositoryHelper = repositoryHelper;
+        this.infiniteGameRepository = infiniteGameRepository;
+        this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public InfiniteGame getCurrentInfiniteGame(Long userId) {
+        return infiniteGameRepository.findByUserId(userId)
+                .orElseGet(() -> startInfiniteGame(userId));
+    }
+
+    @Override
+    public InfiniteGame startInfiniteGame(Long userId) {
+        List<Item> allItems = itemService.getAllItems();
+        if (allItems.isEmpty()) {
+            throw new RuntimeException("No items available for infinite game");
+        }
+
+        Random random = new Random();
+        Item randomItem = allItems.get(random.nextInt(allItems.size()));
+
+        InfiniteGame game = new InfiniteGame(userId, LocalDateTime.now());
+        game.setCurrentTarget(randomItem);
+
+        Long gameId = infiniteGameRepository.save(game);
+        game.setId(gameId);
+
+        return game;
+    }
+
+    @Override
+    public GuessResult processInfiniteGuess(Long userId, Long itemId, Long targetItemId) {
+        try {
+            var user = userRepository.findById(userId).orElseThrow(() ->
+                    new RuntimeException("User not found: " + userId));
+            var guessedItem = itemRepository.findById(itemId).orElseThrow(() ->
+                    new RuntimeException("Item not found: " + itemId));
+            var targetItem = itemRepository.findById(targetItemId).orElseThrow(() ->
+                    new RuntimeException("Target item not found: " + targetItemId));
+
+            var game = getCurrentInfiniteGame(userId);
+            boolean isCorrect = guessedItem.getId().equals(targetItem.getId());
+
+            game.setLastGuessAt(LocalDateTime.now());
+
+            if (isCorrect) {
+                int scoreEarned = calculateInfiniteScore(game.getStreak() + 1);
+                game.addScore(scoreEarned);
+                game.incrementStreak();
+                game.addPreviousItem(targetItem);
+
+                List<Item> allItems = itemService.getAllItems();
+                Random random = new Random();
+                Item newTargetItem;
+                do {
+                    newTargetItem = allItems.get(random.nextInt(allItems.size()));
+                } while (newTargetItem.getId().equals(targetItem.getId()));
+
+                game.setCurrentTarget(newTargetItem);
+
+                Map<String, Object> additionalData = new HashMap<>();
+                additionalData.put("streak", game.getStreak());
+                additionalData.put("newTargetItemId", newTargetItem.getId());
+
+                infiniteGameRepository.update(game);
+
+                return new GuessResult(true, "Правильно! Предмет угадан!", scoreEarned, null, additionalData);
+            } else {
+                game.resetStreak();
+                infiniteGameRepository.update(game);
+
+                String hint = getAttributesHint(targetItemId, itemId);
+                return new GuessResult(false, "Неправильно! " + hint, 0, null);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error processing infinite guess: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Map<String, Object> getInfiniteHint(Long userId) {
+        Map<String, Object> hint = new HashMap<>();
+        try {
+            InfiniteGame game = getCurrentInfiniteGame(userId);
+            Item targetItem = game.getCurrentTarget();
+
+            hint.put("rarity", targetItem.getRarity());
+            hint.put("effectType", targetItem.isActive());
+            hint.put("costRange", getCostRangeHint(targetItem.getCost()));
+
+            game.useHint();
+            infiniteGameRepository.update(game);
+            hint.put("hintsUsed", game.getHintsUsed());
+
+        } catch (Exception e) {
+            hint.put("error", "Unable to provide hint");
+        }
+        return hint;
+    }
+
+    private int calculateInfiniteScore(int streak) {
+        return 100 + (streak * 50);
+    }
+
+    private String getCostRangeHint(int cost) {
+        if (cost <= 500) return "Дешевый предмет (до 500 золота)";
+        else if (cost <= 1000) return "Средний предмет (500-1000 золота)";
+        else if (cost <= 2000) return "Дорогой предмет (1000-2000 золота)";
+        else return "Очень дорогой предмет (свыше 2000 золота)";
+    }
+
+    private String getAttributesHint(Long targetItemId, Long guessedItemId) {
+        Item targetItem = itemService.getItemById(targetItemId)
+                .orElseThrow(() -> new IllegalArgumentException("Target item not found"));
+        Item guessedItem = itemService.getItemById(guessedItemId)
+                .orElseThrow(() -> new IllegalArgumentException("Guessed item not found"));
+
+        StringBuilder hint = new StringBuilder();
+
+        if (!targetItem.getRarity().equals(guessedItem.getRarity())) {
+            hint.append("Редкость отличается. ");
+        }
+
+        if (!targetItem.isActive() && guessedItem.isActive()) {
+            hint.append("Тип эффекта отличается. ");
+        }
+
+        if (targetItem.getCost() > guessedItem.getCost()) {
+            hint.append("Нужный предмет дороже. ");
+        } else if (targetItem.getCost() < guessedItem.getCost()) {
+            hint.append("Нужный предмет дешевле. ");
+        }
+
+        return hint.length() > 0 ? hint.toString() : "Проверьте атрибуты предмета";
     }
 
     @Override
@@ -88,28 +228,42 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public GuessResult processClassicGuess(Long userId, Long itemId, String guessType, LocalDate date) {
-        ChallengeBlock block = getChallengeBlock(date, BlockType.CLASSIC);
-        UserResult userResult = getOrCreateUserResult(userId, date, BlockType.CLASSIC);
+        try {
+            ChallengeBlock block = getChallengeBlock(date, BlockType.CLASSIC);
+            UserResult userResult = getOrCreateUserResult(userId, date, BlockType.CLASSIC);
 
-        if (userResult.getCompleted()) {
-            return new GuessResult(false, "Already completed", 0, userResult);
+            if (userResult.getCompleted()) {
+                return new GuessResult(false, "Already completed", 0, userResult);
+            }
+
+            boolean isRoot = itemId.equals(block.getTargetItemId());
+            boolean isComponent = isItemInTree(block.getTargetItemId(), itemId);
+            boolean isCorrect = isRoot || isComponent;
+            userResult.setAttempts(userResult.getAttempts() + 1);
+
+            if (isRoot) {
+                userResult.setCompleted(true);
+                userResult.setScore(calculateScore(BlockType.CLASSIC, userResult.getAttempts(), true));
+                userResult.setCompletedAt(LocalDateTime.now());
+            }
+
+            repositoryHelper.putUserResult(userResultRepository, userResult);
+            updateUserStatistics(userId, userResult);
+
+            String message = isRoot ? "Поздравляем! Вы угадали корневой предмет!" :
+                    isComponent ? "Правильно! Этот предмет есть в сборке" :
+                            "Этот предмет не входит в сборку";
+
+            Map<String, Object> additionalData = new HashMap<>();
+            additionalData.put("isRoot", isRoot);
+            additionalData.put("guessedItemId", itemId);
+
+            return new GuessResult(isCorrect, message, userResult.getScore(), userResult, additionalData);
+
+        } catch (Exception e) {
+            System.err.println("Error in processClassicGuess: " + e.getMessage());
+            return new GuessResult(false, "Ошибка обработки предположения: " + e.getMessage(), 0, null);
         }
-
-        // Логика для классического режима (угадывание по дереву сборки)
-        boolean isCorrect = checkClassicGuess(block.getTargetItemId(), itemId, guessType);
-        userResult.setAttempts(userResult.getAttempts() + 1);
-
-        if (isCorrect && "root".equals(guessType)) {
-            userResult.setCompleted(true);
-            userResult.setScore(calculateScore(BlockType.CLASSIC, userResult.getAttempts(), true));
-            userResult.setCompletedAt(LocalDateTime.now());
-        }
-
-        repositoryHelper.putUserResult(userResultRepository, userResult);
-        updateUserStatistics(userId, userResult);
-
-        return new GuessResult(isCorrect, isCorrect ? "Correct component!" : "Wrong component",
-                userResult.getScore(), userResult);
     }
 
     @Override
@@ -240,58 +394,50 @@ public class ChallengeServiceImpl implements ChallengeService {
         return score;
     }
 
-    @Override
-    public InfiniteGame getCurrentInfiniteGame(Long userId) {
-        return new InfiniteGame(userId, LocalDateTime.now());
-    }
-
-    @Override
-    public InfiniteGame startInfiniteGame(Long userId) {
-        return new InfiniteGame(userId, LocalDateTime.now());
-    }
-
-    @Override
-    public GuessResult processInfiniteGuess(Long userId, Long itemId) {
-        return new GuessResult(true, "Correct!", 10, null);
-    }
-
-    @Override
-    public Map<String, Object> getInfiniteHint(Long userId) {
-        Map<String, Object> hint = new HashMap<>();
-        hint.put("attribute", "AD");
-        hint.put("value", 25);
-        return hint;
-    }
 
     private UserResult getOrCreateUserResult(Long userId, LocalDate date, BlockType blockType) {
-        return userResultRepository.findByUserAndDateAndType(userId, date, blockType)
-                .orElse(new UserResult(userId, date, blockType));
-    }
-
-    private boolean checkClassicGuess(Long targetItemId, Long guessedItemId, String guessType) {
-        if ("root".equals(guessType)) {
-            return targetItemId.equals(guessedItemId);
-        } else {
-            return itemService.getItemComponents(targetItemId).stream()
-                    .anyMatch(item -> item.getId().equals(guessedItemId));
+        try {
+            Optional<UserResult> existingResult = userResultRepository.findByUserAndDateAndType(userId, date, blockType);
+            if (existingResult.isPresent()) {
+                return existingResult.get();
+            } else {
+                UserResult newResult = new UserResult(userId, date, blockType);
+                Long newId = userResultRepository.save(newResult);
+                newResult.setId(newId);
+                return newResult;
+            }
+        } catch (Exception e) {
+            return new UserResult(userId, date, blockType);
         }
     }
 
-    private String getAttributesHint(Long targetItemId, Long guessedItemId) {
-        Item targetItem = itemService.getItemById(targetItemId)
-                .orElseThrow(() -> new IllegalArgumentException("Target item not found"));
-        Item guessedItem = itemService.getItemById(guessedItemId)
-                .orElseThrow(() -> new IllegalArgumentException("Guessed item not found"));
-
-        StringBuilder hint = new StringBuilder();
-
-        if (targetItem.getCost() > guessedItem.getCost()) {
-            hint.append("Target item is more expensive. ");
-        } else if (targetItem.getCost() < guessedItem.getCost()) {
-            hint.append("Target item is cheaper. ");
+    private boolean isItemInTree(Long rootItemId, Long searchedItemId) {
+        if (rootItemId.equals(searchedItemId)) {
+            return true;
         }
 
-        return hint.length() > 0 ? hint.toString() : "Different attributes";
+        ItemTree tree = itemService.getItemTree(rootItemId);
+        return searchItemInTree(tree, searchedItemId);
+    }
+
+    private boolean searchItemInTree(ItemTree tree, Long searchedItemId) {
+        if (tree == null || tree.getItem() == null) {
+            return false;
+        }
+
+        if (tree.getItem().getId().equals(searchedItemId)) {
+            return true;
+        }
+
+        if (tree.getComponents() != null) {
+            for (ItemTree component : tree.getComponents()) {
+                if (searchItemInTree(component, searchedItemId)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void updateUserStatistics(Long userId, UserResult result) {
@@ -305,8 +451,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         LocalDate today = LocalDate.now();
-        if (stats.getLastDailyPlay() == null ||
-                !stats.getLastDailyPlay().equals(today.minusDays(1))) {
+        if (stats.getLastDailyPlay() == null || !stats.getLastDailyPlay().equals(today.minusDays(1))) {
             stats.setDailyStreak(1);
         } else {
             stats.setDailyStreak(stats.getDailyStreak() + 1);
@@ -318,7 +463,6 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         stats.setUpdatedAt(LocalDateTime.now());
-
         repositoryHelper.putUserStatistics(userStatisticsRepository, stats);
     }
 }

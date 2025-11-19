@@ -37,6 +37,11 @@ public class ItemRecipeRepositoryImpl implements ItemRecipeRepository {
         WHERE parent_item_id = ? AND component_item_id = ?
         """;
 
+    private static final String DELETE_FROM_ITEM_RECIPES_WHERE_PARENT_ITEM_ID_AND_COMPONENT_ITEM_ID =
+            """
+            DELETE FROM item_recipes WHERE parent_item_id = ? AND component_item_id = ?
+            """;
+
     public ItemRecipeRepositoryImpl(DatabaseConnection databaseConnection) {
         this.databaseConnection = databaseConnection;
     }
@@ -78,6 +83,18 @@ public class ItemRecipeRepositoryImpl implements ItemRecipeRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error finding recipes by parent item", e);
+        }
+    }
+
+    @Override
+    public void deleteByParentAndComponent(Long parentItemId, Long componentItemId) {
+        try (Connection connection = databaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(DELETE_FROM_ITEM_RECIPES_WHERE_PARENT_ITEM_ID_AND_COMPONENT_ITEM_ID)) {
+            statement.setLong(1, parentItemId);
+            statement.setLong(2, componentItemId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting recipe", e);
         }
     }
 

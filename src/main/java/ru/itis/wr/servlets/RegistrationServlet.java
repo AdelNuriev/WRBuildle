@@ -45,6 +45,6 @@ public class RegistrationServlet extends HttpServlet {
         Cookie cookie = new Cookie("sessionId", sessionId);
         cookie.setMaxAge(1000*60);
         resp.addCookie(cookie);
-        resp.sendRedirect(req.getContextPath() + "/profile");
+        resp.sendRedirect(req.getContextPath() + "/auth/login");
     }
 }

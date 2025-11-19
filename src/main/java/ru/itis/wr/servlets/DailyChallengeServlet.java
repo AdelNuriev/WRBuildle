@@ -6,9 +6,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.itis.wr.entities.User;
-import ru.itis.wr.handlers.ChallengeHandler;
-import ru.itis.wr.handlers.ChallengeHandlerFactory;
+import ru.itis.wr.handlers.challenges.ChallengeHandler;
+import ru.itis.wr.handlers.challenges.ChallengeHandlerFactory;
 import ru.itis.wr.services.ChallengeService;
+import ru.itis.wr.services.ItemService;
 
 import java.io.IOException;
 
@@ -20,10 +21,11 @@ public class DailyChallengeServlet extends HttpServlet {
     public void init() throws ServletException {
         try {
             ChallengeService challengeService = (ChallengeService) getServletContext().getAttribute("challengeService");
+            ItemService itemService = (ItemService) getServletContext().getAttribute("itemService");
             if (challengeService == null) {
                 throw new ServletException("ChallengeService not found in ServletContext");
             }
-            this.handlerFactory = new ChallengeHandlerFactory(challengeService);
+            this.handlerFactory = new ChallengeHandlerFactory(challengeService, itemService);
         } catch (Exception e) {
             throw new ServletException("Failed to initialize DailyChallengeServlet", e);
         }

@@ -40,59 +40,33 @@
         </c:if>
 
         <div class="challenge-content">
-            <div class="item-display">
-                <h3>Загаданный предмет:</h3>
-                <div class="item-card">
-                    <img src="${challenge.targetItem.iconUrl}" alt="${challenge.targetItem.name}" class="item-icon-large">
-                    <h4>${challenge.targetItem.name}</h4>
-                    <p class="item-rarity ${challenge.targetItem.rarity}">
-                        ${challenge.targetItem.rarity.displayName}
-                    </p>
-                    <div class="item-attributes">
-                        <c:forEach var="attr" items="${challenge.targetItem.attributes}" varStatus="status">
-                            <span class="attribute-tag">${attr.displayName}</span>
-                        </c:forEach>
-                    </div>
+            <div class="item-tree-section">
+                <h3>Сборка предмета:</h3>
+                <div id="treeContainer" class="tree-container">
+                <script id="treeData" type="application/json">
+                        ${itemTreeJson}
+                </script>
                 </div>
             </div>
 
-            <div class="guess-section">
-                <h3>Какова стоимость этого предмета?</h3>
+            <div class="history-section">
+                <h3>История попыток</h3>
+                <div id="guessHistory" class="guess-history"></div>
+            </div>
 
-                <div class="cost-input-section">
-                    <input type="number" id="costInput" name="guessedCost"
-                           min="0" max="5000" step="50" placeholder="Введите стоимость..."
-                           class="cost-input">
-                    <span class="gold-symbol">золота</span>
-                </div>
-
-                <div class="cost-hints">
-                    <p>Подсказки:</p>
-                    <ul>
-                        <li>Обычные предметы: 0-999 золота</li>
-                        <li>Эпические предметы: 1000-1999 золота</li>
-                        <li>Мифические предметы: 2000-2999 золота</li>
-                        <li>Легендарные предметы: 3000+ золота</li>
-                        <li>Сапоги: обычно 300-1100 золота</li>
-                    </ul>
-                </div>
-
-                <c:if test="${not empty guessResult}">
-                    <div class="guess-feedback ${guessResult.correct ? 'correct' : 'incorrect'}">
-                            ${guessResult.message}
-                        <c:if test="${!guessResult.correct}">
-                            <p>Попробуйте еще раз!</p>
-                        </c:if>
+            <div class="cost-input-section">
+                <div class="cost-controls">
+                    <label for="costInput">Введите предполагаемую стоимость:</label>
+                    <div class="cost-input-group">
+                        <input type="number" id="costInput" min="0" max="5000"
+                               placeholder="0-5000" ${userResult.completed ? 'disabled' : ''}>
+                        <button type="button" onclick="submitGuess()"
+                        ${userResult.completed ? 'disabled' : ''}
+                                class="btn-primary">
+                            Проверить
+                        </button>
                     </div>
-                </c:if>
-
-                <form action="/guess/cost" method="post" class="guess-form">
-                    <input type="hidden" name="guessedCost" id="guessedCostValue">
-                    <button type="button" onclick="submitGuess()" ${userResult.completed ? 'disabled' : ''}
-                            class="btn-primary">
-                        ${userResult.completed ? 'Завершено' : 'Проверить стоимость'}
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
     </main>
@@ -101,5 +75,12 @@
         <p>&copy; 2025 WR-Buildle.gg - Не является собственностью Riot Games</p>
     </footer>
 </div>
+
+<script>
+    window.challengeData = {
+        completed: ${userResult.completed},
+        targetItemCost: ${targetItem.cost}
+    };
+</script>
 </body>
 </html>

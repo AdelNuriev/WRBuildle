@@ -40,27 +40,33 @@
         </c:if>
 
         <div class="challenge-content">
-            <div class="image-container">
-                <img id="itemImage" src="${challenge.targetItem.iconUrl}"
-                     class="challenge-image" alt="Загаданный предмет">
-                <div class="image-controls">
+            <div class="image-section">
+                <div class="image-container">
+                    <img id="itemImage" src="${targetItem.iconUrl}"
+                         class="challenge-image" alt="Загаданный предмет">
+                </div>
+
+                <div class="difficulty-controls">
                     <label for="difficulty">Сложность:</label>
                     <input type="range" id="difficulty" min="1" max="3" value="3">
                     <span id="difficultyLabel">Challenger</span>
+                    <div class="difficulty-info">
+                        <small>Легко (25 очков) | Средне (50 очков) | Сложно (100 очков)</small>
+                    </div>
                 </div>
             </div>
 
-            <div class="guess-section">
-                <input type="text" id="searchInput" placeholder="Начните вводить название предмета...">
-                <div id="itemsList" class="items-list"></div>
+            <div class="history-section">
+                <h3>История попыток</h3>
+                <div id="guessHistory" class="guess-history"></div>
+            </div>
 
-                <form action="/guess/icon" method="post" class="guess-form">
-                    <input type="hidden" name="itemId" id="selectedItemId">
-                    <input type="hidden" name="difficulty" id="currentDifficulty" value="3">
-                    <button type="submit" ${userResult.completed ? 'disabled' : ''} class="btn-primary">
-                        ${userResult.completed ? 'Завершено' : 'Сделать предположение'}
-                    </button>
-                </form>
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Начните вводить название предмета..."
+                           oninput="searchItems()" ${userResult.completed ? 'disabled' : ''}>
+                    <div id="itemsList" class="items-grid"></div>
+                </div>
             </div>
         </div>
     </main>
@@ -69,5 +75,12 @@
         <p>&copy; 2025 WR-Buildle.gg - Не является собственностью Riot Games</p>
     </footer>
 </div>
+
+<script>
+    window.challengeData = {
+        completed: ${userResult.completed},
+        targetItemIcon: "${targetItem.iconUrl}"
+    };
+</script>
 </body>
 </html>

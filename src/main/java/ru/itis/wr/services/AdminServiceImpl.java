@@ -36,10 +36,11 @@ public class AdminServiceImpl implements AdminService {
         Item item = new Item();
         item.setName(request.getName());
         item.setRarity(request.getRarity());
+        item.setActive(request.isActive());
         item.setCost(request.getCost());
         item.setIconUrl(request.getIconUrl());
         item.setAttributes(request.getAttributes());
-        item.setActive(true);
+        item.setActive(request.isActive());
 
         return itemService.createItem(item);
     }
@@ -57,6 +58,7 @@ public class AdminServiceImpl implements AdminService {
         if (request.getRarity() != null) item.setRarity(request.getRarity());
         if (request.getIconUrl() != null) item.setIconUrl(request.getIconUrl());
         if (request.getAttributes() != null) item.setAttributes(request.getAttributes());
+        item.setActive(request.isActive());
 
         return itemService.updateItem(item);
     }

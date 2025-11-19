@@ -8,7 +8,7 @@ public class ItemRecipe {
 
     public ItemRecipe() {}
 
-    public ItemRecipe(Long id, Long parentItemId, Long componentItemId, Integer quantity) {
+    public ItemRecipe(Long id, Long parentItemId, Long componentItemId, int quantity) {
         this.id = id;
         this.parentItemId = parentItemId;
         this.componentItemId = componentItemId;

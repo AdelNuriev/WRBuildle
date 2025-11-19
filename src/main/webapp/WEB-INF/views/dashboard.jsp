@@ -18,7 +18,7 @@
         <nav class="main-nav">
             <a href="/dashboard">Главная</a>
             <a href="/daily">Ежедневный режим</a>
-            <a href="/infinite">Бесконечный режим</a>
+            <a href="/start/infinite">Бесконечный режим</a>
             <a href="/shop">Магазин</a>
             <a href="/profile">Профиль</a>
             <a href="/statistics">Статистика</a>
@@ -35,7 +35,7 @@
             <div class="user-stats">
                 <div class="stat-card">
                     <h3>Уровень</h3>
-                    <p class="stat-value">${userStats.level}</p>
+                    <p class="stat-value">${currentUser.level}</p>
                 </div>
                 <div class="stat-card">
                     <h3>Монеты</h3>

@@ -22,7 +22,7 @@ public interface ChallengeService {
 
     InfiniteGame getCurrentInfiniteGame(Long userId);
     InfiniteGame startInfiniteGame(Long userId);
-    GuessResult processInfiniteGuess(Long userId, Long itemId);
+    GuessResult processInfiniteGuess(Long userId, Long itemId, Long targetItemId);
     Map<String, Object> getInfiniteHint(Long userId);
 
     ItemTree getItemTree(Long itemId);

@@ -9,5 +9,6 @@ public interface ItemRecipeRepository {
     List<ItemRecipe> findByParentItemId(Long parentItemId);
     List<ItemRecipe> findByComponentItemId(Long componentItemId);
     void deleteByParentItemId(Long parentItemId);
+    void deleteByParentAndComponent(Long parentItemId, Long componentItemId);
     boolean existsByParentAndComponent(Long parentItemId, Long componentItemId);
 }

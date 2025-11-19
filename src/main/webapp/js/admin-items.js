@@ -11,7 +11,7 @@ function editItem(itemId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const deactivateForms = document.querySelectorAll('form[action*="update-item"]');
+    const deactivateForms = document.querySelectorAll('form.deactivate-form');
     deactivateForms.forEach(form => {
         form.addEventListener('submit', function(e) {
             if (!confirm('Вы уверены, что хотите деактивировать этот предмет?')) {

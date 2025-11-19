@@ -6,6 +6,7 @@ import ru.itis.wr.entities.ItemRarity;
 public class ItemCreateRequest {
     private String name;
     private ItemRarity rarity;
+    private boolean isActive;
     private Short cost;
     private String iconUrl;
     private ItemAttributes[] attributes;
@@ -20,4 +21,6 @@ public class ItemCreateRequest {
     public void setIconUrl(String iconUrl) { this.iconUrl = iconUrl; }
     public ItemAttributes[] getAttributes() { return attributes; }
     public void setAttributes(ItemAttributes[] attributes) { this.attributes = attributes; }
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean active) { isActive = active; }
 }

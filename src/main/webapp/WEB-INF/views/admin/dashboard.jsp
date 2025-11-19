@@ -64,9 +64,6 @@
                     <a href="/admin/items" class="btn-secondary">
                         Управление предметами
                     </a>
-                    <a href="/admin/users" class="btn-secondary">
-                        Управление пользователями
-                    </a>
                 </div>
             </div>
 

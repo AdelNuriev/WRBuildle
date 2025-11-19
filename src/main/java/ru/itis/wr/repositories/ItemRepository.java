@@ -15,5 +15,4 @@ public interface ItemRepository {
     List<Item> findByCostRange(Integer minCost, Integer maxCost);
     void update(Item item);
     void deactivate(Long itemId);
-
 }

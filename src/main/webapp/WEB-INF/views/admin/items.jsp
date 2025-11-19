@@ -63,6 +63,13 @@
                             <option value="LEGENDARY">Легендарный</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Тип способности:</label>
+                        <select name="type" required>
+                            <option value="ACTIVE">Активный</option>
+                            <option value="PASSIVE">Пассивный</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-row">
@@ -72,7 +79,7 @@
                     </div>
                     <div class="form-group">
                         <label>URL иконки:</label>
-                        <input type="url" name="iconUrl" required>
+                        <input type="text" name="iconUrl" required>
                     </div>
                 </div>
 
@@ -117,12 +124,15 @@
                         </div>
 
                         <div class="item-actions">
-                            <button onclick="editItem(${item.id})" class="btn-small">Редактировать</button>
-                            <form action="/admin/update-item" method="post"
-                                  style="display: inline;">
+                            <a href="/admin/edit-item?itemId=${item.id}" class="btn-small">Редактировать</a>
+                            <a href="/admin/manage-recipe?itemId=${item.id}" class="btn-small">Управление сборкой</a>
+                            <form action="/admin/update-item" method="post" class="deactivate-form">
                                 <input type="hidden" name="itemId" value="${item.id}">
                                 <input type="hidden" name="isActive" value="false">
-                                <button type="submit" class="btn-small btn-danger">Деактивировать</button>
+                                <button type="submit" class="btn-small btn-danger" style = "word-wrap: break-word;"
+                                        onclick="return confirm('Вы уверены, что хотите деактивировать предмет ${item.name}?')">
+                                    Деактивировать
+                                </button>
                             </form>
                         </div>
                     </div>

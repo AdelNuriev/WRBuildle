@@ -6,7 +6,6 @@ import ru.itis.wr.repositories.dataSource.DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +94,9 @@ public class UserResultRepositoryImpl implements UserResultRepository {
             return Optional.empty();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding user result", e);
+            System.err.println("SQL Error finding user result for user " + userId +
+                    ", date " + date + ", type " + blockType + ": " + e.getMessage());
+            return Optional.empty();
         }
     }
 

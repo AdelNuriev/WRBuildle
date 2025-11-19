@@ -31,33 +31,51 @@
     </header>
 
     <main class="challenge-page">
-        <h2>Соберите дерево предметов</h2>
-
-        <c:if test="${userResult.completed}">
-            <div class="completed-banner">
-                ✅ Вы уже завершили это задание! Очков заработано: ${userResult.score}
+        <div class="challenge-header">
+            <h2>Угадайте предмет по сборке</h2>
+        </div>
+        <c:if test="${not empty error}">
+            <div class="error-message">
+                    ${error}
+                <br><small>Попробуйте обновить страницу или вернуться позже</small>
             </div>
         </c:if>
 
-        <div class="challenge-content">
-            <div class="item-tree">
-                <h3>Дерево сборки:</h3>
-                <div id="treeContainer" class="tree-container"></div>
-            </div>
+        <c:if test="${empty error}">
+            <c:if test="${userResult.completed}">
+                <div class="completed-banner">
+                    ✅ Вы уже завершили это задание! Очков заработано: ${userResult.score}
+                </div>
+            </c:if>
 
-            <div class="guess-section">
-                <input type="text" id="searchInput" placeholder="Начните вводить название предмета...">
-                <div id="itemsList" class="items-list"></div>
+            <div class="challenge-content">
+                <div class="item-tree">
+                    <h3>Дерево сборки:</h3>
+                    <div id="treeContainer" class="tree-container">
+                    <script id="treeData" type="application/json">
+                        ${itemTreeJson}
+                    </script>
+                    </div>
+                </div>
 
-                <form action="/guess/classic" method="post" class="guess-form">
-                    <input type="hidden" name="itemId" id="selectedItemId">
-                    <input type="hidden" name="guessType" id="guessType" value="component">
-                    <button type="submit" ${userResult.completed ? 'disabled' : ''} class="btn-primary">
-                        ${userResult.completed ? 'Завершено' : 'Сделать предположение'}
-                    </button>
-                </form>
+                <div class="guess-history">
+                    <h4>История выбора:</h4>
+                    <div id="guessHistory"></div>
+                </div>
+
+                <div class="guess-section">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Начните вводить название предмета..."
+                               onkeyup="searchItems()" ${userResult.completed ? 'disabled' : ''}>
+                        <div id="itemsList" class="items-grid"></div>
+                    </div>
+
+                    <div class="guess-instruction">
+                            ${userResult.completed ? 'Задание завершено' : 'Выберите предмет из списка для автоматического предположения'}
+                    </div>
+                </div>
             </div>
-        </div>
+        </c:if>
     </main>
 
     <footer>

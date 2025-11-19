@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Найди пропущенный - WR-Buildle.gg</title>
+    <title>Найди пропущенный предмет - WR-Buildle.gg</title>
     <link rel="stylesheet" href="/css/layout.css">
     <link rel="stylesheet" href="/css/challenge.css">
     <script src="/js/missing-challenge.js" defer></script>
@@ -31,7 +31,7 @@
     </header>
 
     <main class="challenge-page">
-        <h2>Найдите недостающий предмет</h2>
+        <h2>Найдите пропущенный предмет в сборке</h2>
 
         <c:if test="${userResult.completed}">
             <div class="completed-banner">
@@ -40,23 +40,30 @@
         </c:if>
 
         <div class="challenge-content">
-            <div class="item-tree">
-                <h3>Дерево сборки с пропущенным предметом:</h3>
-                <div id="treeContainer" class="tree-container"></div>
+            <div class="tree-section">
+                <h3>Сборка с пропущенным предметом:</h3>
+                <div id="treeContainer" class="tree-container">
+                <script id="treeData" type="application/json">
+                        ${itemTreeJson}
+                    </script>
+                </div>
             </div>
 
-            <div class="guess-section">
-                <p class="hint-text">В дереве сборки отсутствует один предмет. Найдите его!</p>
+            <div class="history-section">
+                <h3>История попыток</h3>
+                <div id="guessHistory" class="guess-history"></div>
+            </div>
 
-                <input type="text" id="searchInput" placeholder="Начните вводить название предмета...">
-                <div id="itemsList" class="items-list"></div>
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Начните вводить название предмета..."
+                    ${userResult.completed ? 'disabled' : ''}>
+                    <div id="itemsList" class="items-grid"></div>
+                </div>
 
-                <form action="/guess/missing" method="post" class="guess-form">
-                    <input type="hidden" name="itemId" id="selectedItemId">
-                    <button type="submit" ${userResult.completed ? 'disabled' : ''} class="btn-primary">
-                        ${userResult.completed ? 'Завершено' : 'Найти пропущенный предмет'}
-                    </button>
-                </form>
+                <div class="guess-instruction">
+                    Найдите и выберите пропущенный предмет в сборке выше
+                </div>
             </div>
         </div>
     </main>
@@ -65,5 +72,12 @@
         <p>&copy; 2025 WR-Buildle.gg - Не является собственностью Riot Games</p>
     </footer>
 </div>
+
+<script>
+    window.challengeData = {
+        completed: ${userResult.completed},
+        missingItemId: ${extraItemId}
+    };
+</script>
 </body>
 </html>
